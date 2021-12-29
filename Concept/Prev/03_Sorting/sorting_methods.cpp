@@ -1,3 +1,13 @@
+/*
+    0. [x] °ÅÇ° Á¤·Ä(Bubble Sort)
+    1. [x] ¼±ÅÃ Á¤·Ä(Selection Sort)
+    2. [x] »ðÀÔ Á¤·Ä(Insertion Sort)
+    3. [x] Äü Á¤·Ä(Quick Sort)
+    4. [x] º´ÇÕ Á¤·Ä(Merge Sort)
+    5. [x] Èü Á¤·Ä(Heap Sort)
+    6. [] ±â¼ö Á¤·Ä(Radix Sort)
+    7. [] °è¼ö Á¤·Ä(Counting Sort)
+*/
 #pragma region
 #include <cstdio>
 #include <cstring>
@@ -10,7 +20,12 @@
 #include <functional>
 #include <utility>
 #include <random>
-#define SWAP(a, b, type) { type temp = a; a = b; b = temp; }
+#define SWAP(a, b, type) \
+    {                    \
+        type temp = a;   \
+        a = b;           \
+        b = temp;        \
+    }
 using namespace std;
 
 typedef unsigned int ui;
@@ -25,10 +40,10 @@ int arr[MN];
 
 void setDiv()
 {
-    string concat = "-----";
+    string divInc = "-----";
     for (int i = 0; i < MN; i++)
     {
-        divStr += concat;
+        divStr += divInc;
     }
 }
 
@@ -43,8 +58,7 @@ void setArr()
 
     for (int i = 0; i < MN; i++)
     {
-        int num = rand() % MOD;
-        arr[i] = num;
+        arr[i] = rand() % MOD;
     }
 }
 
@@ -81,16 +95,6 @@ void printRound(int round)
     printf("\n");
 }
 
-/*
-    0. [x] ê±°í’ˆ ì •ë ¬(Bubble Sort)
-    1. [x] ì„ íƒ ì •ë ¬(Selection Sort)
-    2. [x] ì‚½ìž… ì •ë ¬(Insertion Sort)
-    3. [] í€µ ì •ë ¬(Quick Sort)
-    4. [] ë³‘í•© ì •ë ¬(Merge Sort)
-    5. [] íž™ ì •ë ¬(Heap Sort)
-    6. [] ê¸°ìˆ˜ ì •ë ¬(Radix Sort)
-    7. [] ê³„ìˆ˜ ì •ë ¬(Counting Sort)
-*/
 void bubbleSort()
 {
     for (int i = 0; i < MN - 1; i++)
@@ -137,19 +141,23 @@ void insertionSort()
 }
 void quickSort()
 {
-    int i = 1, left = 0, right = MN-1;
+    int i = 1, left = 0, right = MN - 1;
     function<void(int, int)> qSort;
     function<int(int, int)> partition;
 
-    partition = [&arr](int left, int right) -> int {
+    partition = [&arr](int left, int right) -> int
+    {
         int pivot = arr[left];
-        int i=left, j = right;
+        int i = left, j = right;
 
-        while(i<j) {
-            while(pivot < arr[j]){
+        while (i < j)
+        {
+            while (pivot < arr[j])
+            {
                 j--;
             }
-            while(i<j&&pivot>=arr[i]){
+            while (i < j && pivot >= arr[i])
+            {
                 i++;
             }
             SWAP(arr[i], arr[j], int);
@@ -160,56 +168,70 @@ void quickSort()
         return i;
     };
 
-    qSort = [&](int left, int right) {
-        if(left >= right) return;
+    qSort = [&](int left, int right)
+    {
+        if (left >= right)
+            return;
         printf("%d, %d ", left, right);
 
         int pivotIdx = partition(left, right);
         printRound(i++);
 
-        qSort(left, pivotIdx-1);
-        qSort(pivotIdx+1, right);
+        qSort(left, pivotIdx - 1);
+        qSort(pivotIdx + 1, right);
     };
 
-    qSort(left, right);    
+    qSort(left, right);
 }
 
 void mergeSort()
 {
     int arr2[MN];
-    int round=1;
+    int round = 1;
     function<void(int, int)> merge;
     function<void(int, int)> partition;
 
-    partition = [&partition, &merge](int left, int right) {
-        if(left<right) {
+    partition = [&partition, &merge](int left, int right)
+    {
+        if (left < right)
+        {
             int mid = (left + right) / 2;
             partition(left, mid);
-            partition(mid+1, right);
+            partition(mid + 1, right);
             merge(left, right);
         }
     };
 
-    merge = [&](int left, int right) {
+    merge = [&](int left, int right)
+    {
         printf("%d, %d", left, right);
-        int mid = (left+right)/2;
-        int i=left, j=mid+1, k=left;
+        int mid = (left + right) / 2;
+        int i = left, j = mid + 1, k = left;
 
-        while(i<=mid && j<=right){
-            if(arr[i]<=arr[j]){
+        while (i <= mid && j <= right)
+        {
+            if (arr[i] <= arr[j])
+            {
                 arr2[k++] = arr[i++];
             }
-            else {
+            else
+            {
                 arr2[k++] = arr[j++];
             }
         }
-        int tmp = i>mid ? j : i;
-        while(k<=right) {arr2[k++] = arr[tmp++];}
-        for(i=left; i<=right; i++) {arr[i]=arr2[i];}
+        int tmp = i > mid ? j : i;
+        while (k <= right)
+        {
+            arr2[k++] = arr[tmp++];
+        }
+        for (i = left; i <= right; i++)
+        {
+            arr[i] = arr2[i];
+        }
         printRound(round++);
     };
 
-    partition(0, MN-1);
+    partition(0, MN - 1);
 }
 
 void heapSort()
@@ -218,34 +240,39 @@ void heapSort()
     function<void(int, int)> heapify;
     function<void(int)> heapsort;
 
-    // ìµœëŒ€íž™
-    heapify = [&](int last, int i) {
-        int p=i;
-        int l=2*p+1;
-        int r=2*p+2;
+    // ÃÖ´ëÈü
+    heapify = [&](int last, int i)
+    {
+        int p = i;
+        int l = 2 * p + 1;
+        int r = 2 * p + 2;
 
-        if(l<last&&arr[p]<arr[l])
-            p=l;
-        if(r<last&&arr[p]<arr[r])
-            p=r;
+        if (l < last && arr[p] < arr[l])
+            p = l;
+        if (r < last && arr[p] < arr[r])
+            p = r;
 
-        if(p!=i){
+        if (p != i)
+        {
             SWAP(arr[p], arr[i], int);
             heapify(last, p);
         }
     };
 
-    heapsort = [&](int last) {
-        // ìµœëŒ€íž™ êµ¬ì„±
-        for(int p=last/2-1; p>=0; p--){
+    heapsort = [&](int last)
+    {
+        // ÃÖ´ëÈü ±¸¼º
+        for (int p = last / 2 - 1; p >= 0; p--)
+        {
             heapify(last, p);
         }
-        printRound(round++);     
+        printRound(round++);
 
-        for(int i=last-1; i>0; i--){
+        for (int i = last - 1; i > 0; i--)
+        {
             SWAP(arr[0], arr[i], int);
             heapify(i, 0);
-            printRound(round++);            
+            printRound(round++);
         }
     };
     heapsort(MN);
@@ -254,7 +281,6 @@ void heapSort()
 
 void radixSort()
 {
-    
 }
 
 void countingSort()
@@ -266,6 +292,9 @@ void (*sortFuncs[8])() = {bubbleSort, selectionSort, insertionSort, quickSort, m
 void solve()
 {
     setDiv();
+
+    printf("Á¤·Ä ¹æ¹ýÀ» ¼±ÅÃÇÏ¼¼¿ä:\n0. °ÅÇ° Á¤·Ä(Bubble Sort)\n1. ¼±ÅÃ Á¤·Ä(Selection Sort)\n2. »ðÀÔ Á¤·Ä(Insertion Sort)\n3. Äü Á¤·Ä(Quick Sort)\n4. º´ÇÕ Á¤·Ä(Merge Sort)\n5. Èü Á¤·Ä(Heap Sort)\n6. ±â¼ö Á¤·Ä(Radix Sort)\n7. °è¼ö Á¤·Ä(Counting Sort)\n\n");
+
     int cmd;
     while (scanf("%d", &cmd))
     {
